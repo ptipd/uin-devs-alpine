@@ -89,6 +89,9 @@ ps: ## Show running container
 pa: ## Show all running container
 	docker ps -a
 
+logs: ## Show running container logs
+	docker logs $(RUN_NAME)
+
 dive: ## Dive image folder structure
 	dive $(ORG_NAME)/$(APP_NAME):$(TAG_NAME)
 
