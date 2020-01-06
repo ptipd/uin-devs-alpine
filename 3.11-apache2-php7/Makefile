@@ -25,9 +25,11 @@ help: ## This help.
 # Build the container
 build: ## Build the container
 	docker build -t $(ORG_NAME)/$(APP_NAME):$(TAG_NAME) .
+	docker build -t $(ORG_NAME)/$(APP_NAME):latest .
 
 build-nc: ## Build the container without caching
 	docker build --no-cache -t $(ORG_NAME)/$(APP_NAME):$(TAG_NAME) .
+	docker build --no-cache -t $(ORG_NAME)/$(APP_NAME):latest .
 
 run: ## Run container on port configured in `config.env`
 	docker run -d -t --rm --env-file=./.config.env -p=$(OPORT):$(IPORT) --name="$(RUN_NAME)" $(ORG_NAME)/$(APP_NAME):$(TAG_NAME)
@@ -56,27 +58,15 @@ prune-volumes: ## Remove unused/stopped volume(s)
 release: build-nc publish ## Make a release by building and publishing the `{version}` ans `latest` tagged containers to ECR
 
 # Docker publish
-publish: repo-login publish-latest publish-version ## Publish the `{version}` ans `latest` tagged containers to ECR
+publish: publish-latest publish-version ## Publish the `{version}` and `latest` tagged containers to ECR
 
-publish-latest: tag-latest ## Publish the `latest` taged container to ECR
+publish-latest: ## Publish the `latest` taged container to ECR
 	@echo 'publish latest to $(ORG_NAME)/$(APP_NAME)'
 	docker push $(ORG_NAME)/$(APP_NAME):latest
 
-publish-version: tag-version ## Publish the `{version}` taged container to ECR
+publish-version: ## Publish the `{version}` taged container to ECR
 	@echo 'publish $(VERSION) to $(ORG_NAME)'
 	docker push $(ORG_NAME)/$(APP_NAME):$(TAG_NAME)
-
-# -----------------------------------------------------------------------------
-# Docker tagging
-tag: tag-latest tag-version ## Generate container tags for the `{version}` ans `latest` tags
-
-tag-latest: ## Generate container `{version}` tag
-	@echo 'create tag latest'
-	docker tag $(APP_NAME) $(ORG_NAME)/$(APP_NAME):latest
-
-tag-version: ## Generate container `latest` tag
-	@echo 'create tag $(VERSION)'
-	docker tag $(APP_NAME) $(ORG_NAME)/$(APP_NAME):$(TAG_NAME)
 
 # =============================================================================
 # HELPERS
