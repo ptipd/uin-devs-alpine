@@ -10,10 +10,6 @@ s='AllowOverride [Nn]one'
 cat $F | grep "$s"; cat $F | grep "$s" | sed "s/$s/AllowOverride All/"; echo
 #sed -i 's/AllowOverride [Nn]one/AllowOverride All/' /etc/apache2/httpd.conf && \
 
-s='^ServerRoot .*'
-cat $F | grep "$s"; cat $F | grep "$s" | sed "s#$s#ServerRoot /app#g"; echo
-#sed -i 's#^ServerRoot .*#ServerRoot /app#g'  /etc/apache2/httpd.conf && \
-
 s='^#ServerName.*'
 cat $F | grep "$s"; cat $F | grep "$s" | sed "s/$s/ServerName webAlpinePHP/g"; echo
 #sed -i 's/^#ServerName.*/ServerName webAlpinePHP/' /etc/apache2/httpd.conf && \
