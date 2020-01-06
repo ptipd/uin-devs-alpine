@@ -20,7 +20,7 @@ help: ## This help.
 
 .DEFAULT_GOAL := help
 
-
+# =============================================================================
 # DOCKER TASKS
 # Build the container
 build: ## Build the container
@@ -32,9 +32,9 @@ build-nc: ## Build the container without caching
 run: ## Run container on port configured in `config.env`
 	docker run -i -t --rm --env-file=./.config.env -p=$(OPORT):$(IPORT) --name="$(APP_NAME)" $(ORG_NAME)/$(APP_NAME):$(TAG_NAME)
 
-
 up: build run ## Run container on port configured in `.config.env` (Alias to run)
 
+# -----------------------------------------------------------------------------
 stop: ## Stop and remove a running container
 	docker stop $(RUN_NAME); docker rm $(RUN_NAME)
 
@@ -51,6 +51,7 @@ publish-version: tag-version ## Publish the `{version}` taged container to ECR
 	@echo 'publish $(VERSION) to $(ORG_NAME)'
 	docker push $(ORG_NAME)/$(APP_NAME):$(TAG_NAME)
 
+# -----------------------------------------------------------------------------
 # Docker tagging
 tag: tag-latest tag-version ## Generate container tags for the `{version}` ans `latest` tags
 
@@ -62,8 +63,8 @@ tag-version: ## Generate container `latest` tag
 	@echo 'create tag $(VERSION)'
 	docker tag $(APP_NAME) $(ORG_NAME)/$(APP_NAME):$(TAG_NAME)
 
+# =============================================================================
 # HELPERS
-
 version: ## Output the current version
 	@echo $(VERSION)
 
