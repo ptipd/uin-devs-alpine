@@ -30,14 +30,29 @@ build-nc: ## Build the container without caching
 	docker build --no-cache -t $(ORG_NAME)/$(APP_NAME):$(TAG_NAME) .
 
 run: ## Run container on port configured in `config.env`
-	docker run -i -t --rm --env-file=./.config.env -p=$(OPORT):$(IPORT) --name="$(APP_NAME)" $(ORG_NAME)/$(APP_NAME):$(TAG_NAME)
+	docker run -d -t --rm --env-file=./.config.env -p=$(OPORT):$(IPORT) --name="$(RUN_NAME)" $(ORG_NAME)/$(APP_NAME):$(TAG_NAME)
 
 up: build run ## Run container on port configured in `.config.env` (Alias to run)
 
 # -----------------------------------------------------------------------------
-stop: ## Stop and remove a running container
-	docker stop $(RUN_NAME); docker rm $(RUN_NAME)
+stop: ## Stop a running container
+	docker stop $(RUN_NAME)
 
+rm: ## Remove the container
+	docker rm $(RUN_NAME)
+
+clean: stop rm ## Stop and remove a running container
+
+prune-image: ## Remove unused/un-referred image(s)
+	docker image prune
+
+prune-container: ## Remove unused/stopped container(s)
+	docker container prune
+
+prune-volumes: ## Remove unused/stopped volume(s)
+	docker volume prune
+
+# -----------------------------------------------------------------------------
 release: build-nc publish ## Make a release by building and publishing the `{version}` ans `latest` tagged containers to ECR
 
 # Docker publish
@@ -65,6 +80,18 @@ tag-version: ## Generate container `latest` tag
 
 # =============================================================================
 # HELPERS
+ls: ## Show images
+	docker images
+
+ps: ## Show running container
+	docker ps
+
+pa: ## Show all running container
+	docker ps -a
+
+dive: ## Dive image folder structure
+	dive $(ORG_NAME)/$(APP_NAME):$(TAG_NAME)
+
 version: ## Output the current version
 	@echo $(VERSION)
 
