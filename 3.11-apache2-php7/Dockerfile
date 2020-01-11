@@ -10,16 +10,20 @@ RUN printf "Build of ptipd/uin-base-alpine:3.11, date: %s\n" `date -u +"%Y-%m-%d
         php7-ldap php7-gd php7-json php7-curl php7-pdo php7-mysqli php7-simplexml && \
     #
     # prepare apache settings:
-    sed -i 's#^DocumentRoot ".*#DocumentRoot "/app/html"#g' /etc/apache2/httpd.conf && \
+    mkdir -p /var/www/html && \
+    sed -i 's/#LoadModule rewrite_module/LoadModule rewrite_module/' /etc/apache2/httpd.conf && \
+    sed -i 's#^DocumentRoot ".*#DocumentRoot "/var/www/html"#g' /etc/apache2/httpd.conf && \
     sed -i 's/AllowOverride [Nn]one/AllowOverride All/' /etc/apache2/httpd.conf && \
     sed -i 's/^#ServerName.*/ServerName webAlpinePHP/' /etc/apache2/httpd.conf && \
-    sed -i 's#Directory "/var/www/localhost/htdocs.*#Directory "/app/html">#g' /etc/apache2/httpd.conf && \
-    sed -i 's/Options Indexes/Options/g' /etc/apache2/httpd.conf
+    sed -i 's#Directory "/var/www/localhost/htdocs.*#Directory "/var/www/html">#g' /etc/apache2/httpd.conf && \
+    sed -i 's/Options Indexes/Options/g' /etc/apache2/httpd.conf && \
+    #
+    # prepare sample web:
+    echo '<html><body>It work!</body></html>' > /var/www/html/index.html && \
+    true
 
-COPY base/entpoint.sh /usr/local/bin/
+COPY base/entpoint.sh /app
 
 EXPOSE 80
 
-VOLUME /app
-
-ENTRYPOINT /usr/local/bin/entpoint.sh
+ENTRYPOINT /app
