@@ -1,4 +1,4 @@
-FROM ptipd/uin-base-alpine:3.11
+FROM ptipd/uin-base-alpine:1.1_3.11
 
 ARG CFG_ID
 ARG APP_BUILD
