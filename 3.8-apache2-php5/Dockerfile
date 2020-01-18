@@ -1,4 +1,4 @@
-FROM ptipd/uin-base-alpine:1.1_3.11
+FROM ptipd/uin-base-alpine:1.1_3.8
 
 ARG CFG_ID
 ARG APP_BUILD
@@ -7,8 +7,8 @@ RUN printf "Build of ${APP_BUILD}, date: %s\n" `date -u +"%Y-%m-%dT%H:%M:%SZ"` >
     #
     # install web server and php:
     apk add --no-cache php5-apache2 apache2-utils git \
-        php5-intl php5-pdo_mysql php5-mbstring php5-opcache \
-        php5-ldap php5-gd php5-json php5-curl php5-pdo php5-mysqli php5-simplexml && \
+        php5-intl php5-pdo_mysql php5-opcache \
+        php5-ldap php5-gd php5-json php5-curl php5-pdo php5-mysqli && \
     #
     # prepare apache settings:
     addgroup -g ${CFG_ID} cfg && \
