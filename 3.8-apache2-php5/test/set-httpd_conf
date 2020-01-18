@@ -1,0 +1,28 @@
+#!/bin/bash
+
+F=./httpd.conf; echo
+
+s='^DocumentRoot'
+cat $F | grep $s; cat $F | grep $s | sed "s#$s \".*#DocumentRoot \"/app/html\"#g"; echo
+#sed -i 's#^DocumentRoot ".*#DocumentRoot "/app/html"#g' /etc/apache2/httpd.conf && \
+
+s='AllowOverride [Nn]one'
+cat $F | grep "$s"; cat $F | grep "$s" | sed "s/$s/AllowOverride All/"; echo
+#sed -i 's/AllowOverride [Nn]one/AllowOverride All/' /etc/apache2/httpd.conf && \
+
+s='^#ServerName.*'
+cat $F | grep "$s"; cat $F | grep "$s" | sed "s/$s/ServerName webAlpinePHP/g"; echo
+#sed -i 's/^#ServerName.*/ServerName webAlpinePHP/' /etc/apache2/httpd.conf && \
+
+s='Directory "/var/www/localhost/htdocs.*'
+cat $F | grep "$s"; cat $F | grep "$s" | sed "s#$s#Directory \"/app/html\">#g"; echo
+#sed -i 's#Directory "/var/www/localhost/htdocs.*#Directory "/app/html">#g' /etc/apache2/httpd.conf && \
+
+s='Directory "/var/www/localhost/cgi-bin.*'
+cat $F | grep "$s"; cat $F | grep "$s" | sed "s#$s#Directory \"/app/cgi-bin\">#g"; echo
+#sed -i 's#Directory "/var/www/localhost/cgi-bin.*#Directory "/app/cgi-bin">#g' /etc/apache2/httpd.conf && \
+
+s='Options Indexes'
+cat $F | grep "$s"; cat $F | grep "$s" | sed "s/$s/Options/g"; echo
+#sed -i 's/Options Indexes/Options/g' /etc/apache2/httpd.conf
+
