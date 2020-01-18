@@ -19,17 +19,16 @@ help: ## This help.
 
 .DEFAULT_GOAL := help
 
-NEW_NAME := $(ORG_NAME)/$(APP_NAME)
-IMG_NAME := $(NEW_NAME):$(TAG_NAME)
+IMG_NAME := $(ORG_NAME)/$(APP_NAME):$(TAG_NAME)
 
 # =============================================================================
 # DOCKER TASKS
 # Build the container
 build: ## Build the container
-	docker build --build-arg $(CFG_ID) --build-arg "APP_BUILD=$(IMG_NAME)" -t $(IMG_NAME) -t $(NEW_NAME) .
+	docker build --build-arg $(CFG_ID) --build-arg "APP_BUILD=$(IMG_NAME)" -t $(IMG_NAME) .
 
 build-nc: ## Build the container without caching
-	docker build --no-cache --build-arg $(CFG_ID) --build-arg "APP_BUILD=$(IMG_NAME)" -t $(IMG_NAME) -t $(NEW_NAME) .
+	docker build --no-cache --build-arg $(CFG_ID) --build-arg "APP_BUILD=$(IMG_NAME)" -t $(IMG_NAME) .
 
 run: ## Run container on port configured in `config.env`
 	docker run -d --env-file ./.config.env --name $(RUN_NAME) $(IMG_NAME)
@@ -52,11 +51,8 @@ rm: ## REMOVE the container
 clean: stop rm ## STOP and REMOVE a running container
 
 delete: ## DELETE this image
-	docker rmi $(NEW_NAME) | true
 	docker rmi $(IMG_NAME) | true
-	docker rmi $(HUB_PUTS)/$(NEW_NAME) | true
 	docker rmi $(HUB_PUTS)/$(IMG_NAME) | true
-	docker rmi $(HUB_PUSH)/$(NEW_NAME) | true
 	docker rmi $(HUB_PUSH)/$(IMG_NAME) | true
 
 prune-image: ## Remove unused/un-referred image(s)
@@ -70,15 +66,12 @@ prune-volumes: ## Remove unused/stopped volume(s)
 
 # -----------------------------------------------------------------------------
 puts: ## Publish the `{version}` and `latest` tagged containers to ECR
-	docker push $(HUB_PUTS)/$(NEW_NAME)
 	docker push $(HUB_PUTS)/$(IMG_NAME)
 
 push: ## Publish the `{version}` and `latest` tagged containers to ECR
-	docker push $(HUB_PUSH)/$(NEW_NAME)
 	docker push $(HUB_PUSH)/$(IMG_NAME)
 
 publish: build-nc ## Make a release by building and publishing the `{version}` ans `latest` tagged containers to ECR
-	docker push $(NEW_NAME)
 	docker push $(IMG_NAME)
 
 # -----------------------------------------------------------------------------
@@ -121,7 +114,6 @@ echo: ## Print current profile
 	@echo "\tTAG Name\t\t\t: $(TAG_NAME)"
 	@echo "\tRunning Container Name\t\t: $(RUN_NAME)"
 	@echo "\tLocal TAG-Name\t\t\t: $(IMG_NAME)"
-	@echo "\tLatest IMG-Name\t\t\t: $(NEW_NAME)"
 	@echo "\tLocal Registry URL\t\t: $(HUB_PUTS)"
 	@echo "\tLocal Registry TAG-Name\t\t: $(HUB_PUTS)/$(IMG_NAME)"
 	@echo "\tRemote Registry TAG-Name\t: $(HUB_PUSH)/$(IMG_NAME)"
